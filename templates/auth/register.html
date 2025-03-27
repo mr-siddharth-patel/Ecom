@@ -75,7 +75,12 @@
             
             <div class="mb-3">
               {{ form.password.label(class="form-label") }}
-              {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Create a password", id="passwordInput") }}
+              <div class="input-group">
+                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Create a password", id="passwordInput") }}
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class="bi bi-eye" id="passwordIcon"></i>
+                </button>
+              </div>
               {% if form.password.errors %}
                 <div class="invalid-feedback">
                   {% for error in form.password.errors %}
@@ -97,13 +102,52 @@
             
             <script>
               document.addEventListener('DOMContentLoaded', function() {
+                // Password strength checker elements
                 const passwordInput = document.getElementById('passwordInput');
+                const confirmPasswordInput = document.getElementById('confirmPasswordInput');
                 const lengthCheck = document.getElementById('length-check');
                 const uppercaseCheck = document.getElementById('uppercase-check');
                 const lowercaseCheck = document.getElementById('lowercase-check');
                 const numberCheck = document.getElementById('number-check');
                 const specialCheck = document.getElementById('special-check');
                 
+                // Password match elements
+                const passwordMatch = document.getElementById('passwordMatch');
+                const passwordMismatch = document.getElementById('passwordMismatch');
+                
+                // Toggle password visibility elements
+                const togglePasswordBtn = document.getElementById('togglePassword');
+                const passwordIcon = document.getElementById('passwordIcon');
+                const toggleConfirmPasswordBtn = document.getElementById('toggleConfirmPassword');
+                const confirmPasswordIcon = document.getElementById('confirmPasswordIcon');
+                
+                // Handle password toggle visibility
+                togglePasswordBtn.addEventListener('click', function() {
+                  if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    passwordIcon.classList.remove('bi-eye');
+                    passwordIcon.classList.add('bi-eye-slash');
+                  } else {
+                    passwordInput.type = 'password';
+                    passwordIcon.classList.remove('bi-eye-slash');
+                    passwordIcon.classList.add('bi-eye');
+                  }
+                });
+                
+                // Handle confirm password toggle visibility
+                toggleConfirmPasswordBtn.addEventListener('click', function() {
+                  if (confirmPasswordInput.type === 'password') {
+                    confirmPasswordInput.type = 'text';
+                    confirmPasswordIcon.classList.remove('bi-eye');
+                    confirmPasswordIcon.classList.add('bi-eye-slash');
+                  } else {
+                    confirmPasswordInput.type = 'password';
+                    confirmPasswordIcon.classList.remove('bi-eye-slash');
+                    confirmPasswordIcon.classList.add('bi-eye');
+                  }
+                });
+                
+                // Update password strength indicators
                 const updatePasswordChecks = function() {
                   const password = passwordInput.value;
                   
@@ -151,16 +195,53 @@
                     specialCheck.classList.remove('text-success');
                     specialCheck.classList.add('text-muted');
                   }
+                  
+                  // Check password match if confirm password has a value
+                  checkPasswordMatch();
                 };
                 
-                // Check password criteria on input
+                // Check if passwords match
+                const checkPasswordMatch = function() {
+                  const password = passwordInput.value;
+                  const confirmPassword = confirmPasswordInput.value;
+                  
+                  if (confirmPassword.length === 0) {
+                    // If confirm password is empty, hide both indicators
+                    passwordMatch.style.display = 'none';
+                    passwordMismatch.style.display = 'none';
+                  } else if (password === confirmPassword) {
+                    // Passwords match
+                    passwordMatch.style.display = 'block';
+                    passwordMismatch.style.display = 'none';
+                    
+                    // Add success styling to the input
+                    confirmPasswordInput.classList.remove('is-invalid');
+                    confirmPasswordInput.classList.add('is-valid');
+                  } else {
+                    // Passwords don't match
+                    passwordMatch.style.display = 'none';
+                    passwordMismatch.style.display = 'block';
+                    
+                    // Add error styling to the input
+                    confirmPasswordInput.classList.remove('is-valid');
+                    confirmPasswordInput.classList.add('is-invalid');
+                  }
+                };
+                
+                // Event listeners
                 passwordInput.addEventListener('input', updatePasswordChecks);
+                confirmPasswordInput.addEventListener('input', checkPasswordMatch);
               });
             </script>
             
             <div class="mb-4">
               {{ form.password_confirm.label(class="form-label") }}
-              {{ form.password_confirm(class="form-control" + (" is-invalid" if form.password_confirm.errors else ""), placeholder="Confirm your password") }}
+              <div class="input-group">
+                {{ form.password_confirm(class="form-control" + (" is-invalid" if form.password_confirm.errors else ""), placeholder="Confirm your password", id="confirmPasswordInput") }}
+                <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword">
+                  <i class="bi bi-eye" id="confirmPasswordIcon"></i>
+                </button>
+              </div>
               {% if form.password_confirm.errors %}
                 <div class="invalid-feedback">
                   {% for error in form.password_confirm.errors %}
@@ -168,6 +249,12 @@
                   {% endfor %}
                 </div>
               {% endif %}
+              <div id="passwordMatch" class="form-text mt-2" style="display: none;">
+                <i class="bi bi-check-circle-fill text-success"></i> Passwords match
+              </div>
+              <div id="passwordMismatch" class="form-text mt-2 text-danger" style="display: none;">
+                <i class="bi bi-x-circle-fill"></i> Passwords do not match
+              </div>
             </div>
             
             <div class="d-grid gap-2">
