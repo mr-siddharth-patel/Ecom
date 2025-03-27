@@ -1,5 +1,4 @@
 // Chat Component
-
 const { useState, useEffect, useRef } = React;
 
 const Chat = () => {

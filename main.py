@@ -1,19 +1,14 @@
 import os
 import logging
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-from sqlalchemy.orm import DeclarativeBase
+from flask_cors import CORS
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Define the database base
-class Base(DeclarativeBase):
-    pass
-
-# Initialize SQLAlchemy with the base
-db = SQLAlchemy(model_class=Base)
+# Import shared database instance
+from database import db
 
 # Initialize Flask-Login
 login_manager = LoginManager()
@@ -38,17 +33,20 @@ def create_app():
     login_manager.login_view = 'auth.login'
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'info'
+    
+    # Enable CORS
+    CORS(app)
 
     # Import routes after app creation to avoid circular imports
     with app.app_context():
         # Import models to ensure they're registered with the ORM
         import models
-        from app import main_bp, auth_bp
-
+        
         # Create all tables
         db.create_all()
         
         # Register blueprints
+        from app import main_bp, auth_bp
         app.register_blueprint(main_bp)
         app.register_blueprint(auth_bp)
         

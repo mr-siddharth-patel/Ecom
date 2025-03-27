@@ -14,8 +14,8 @@ from email_validator import validate_email, EmailNotValidError
 import data
 from chat import get_groq_response
 import order_data
+from database import db
 from models import User, Order, OrderItem, Address
-from main import db
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
