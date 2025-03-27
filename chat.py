@@ -1,13 +1,31 @@
 import os
 import logging
-from groq import Groq
+import importlib
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Initialize Groq client
+# Initialize Groq client with version compatibility check
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
-client = Groq(api_key=GROQ_API_KEY)
+
+# Handle different versions of the groq package
+try:
+    # Try to import the Groq class
+    from groq import Groq
+    
+    # Initialize with newer API (should work with 0.4.x)
+    try:
+        client = Groq(api_key=GROQ_API_KEY)
+    except TypeError:
+        # Fall back to older initialization method for earlier versions
+        client = Groq(
+            api_key=GROQ_API_KEY,
+            base_url="https://api.groq.com/openai/v1"
+        )
+except ImportError:
+    logging.error("Groq library not found. Install with: pip install groq")
+    # Create a placeholder client that will raise appropriate errors when used
+    client = None
 
 # Store chat context
 chat_history = {}
@@ -16,8 +34,8 @@ def get_groq_response(user_message, session_id="default"):
     """
     Get a response from the Groq LLM for customer support
     """
-    if not GROQ_API_KEY:
-        logging.warning("GROQ_API_KEY not set, returning mock response")
+    if not GROQ_API_KEY or client is None:
+        logging.warning("GROQ_API_KEY not set or Groq client not initialized, returning mock response")
         return "Whoops! My brain's not plugged in yet. Try again in a bit or drop us an email! 🔌"
     
     # Initialize chat history for this session if it doesn't exist

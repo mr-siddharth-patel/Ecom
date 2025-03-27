@@ -96,6 +96,23 @@ If the AI chat feature is not working:
 2. Check the server logs for any API errors
 3. Make sure you have an active internet connection for API calls
 
+### Groq Library Version Issues
+
+If you encounter errors related to the Groq library:
+
+```
+TypeError: Client.__init__() got an unexpected keyword argument 'proxies'
+```
+
+Try installing a specific version of the groq package:
+
+```bash
+pip uninstall -y groq
+pip install groq==0.3.0
+```
+
+The application is designed to work with various versions of the groq library (0.2.x through 0.4.x), but if you encounter any issues, try downgrading to a more stable version.
+
 ### Port Already In Use
 
 If you see an error about the port being in use:
