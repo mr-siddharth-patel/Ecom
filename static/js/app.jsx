@@ -45,6 +45,8 @@ const App = () => {
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [addedToCartId, setAddedToCartId] = useState(null);
+  const { addToCart } = useContext(CartContext);
 
   useEffect(() => {
     // Fetch featured products (just get all products for now)
@@ -62,6 +64,17 @@ const Home = () => {
       })
       .catch(error => console.error('Error fetching categories:', error));
   }, []);
+  
+  // Handler for adding products to cart
+  const handleAddToCart = (productId) => {
+    addToCart(productId, 1);
+    setAddedToCartId(productId);
+    
+    // Reset the "Added" state after 2 seconds
+    setTimeout(() => {
+      setAddedToCartId(null);
+    }, 2000);
+  };
 
   return (
     <>
@@ -86,7 +99,22 @@ const Home = () => {
           {featuredProducts.map(product => (
             <div key={product.id} className="col-md-6 col-lg-3">
               <div className="card product-card h-100">
-                <img src={product.image_url} className="card-img-top" alt={product.name} />
+                <div className="product-image-container position-relative">
+                  <img src={product.image_url} className="card-img-top" alt={product.name} />
+                  {product.stock > 0 && (
+                    <button 
+                      className="btn btn-sm btn-primary quick-add-btn position-absolute top-0 end-0 m-2"
+                      onClick={() => handleAddToCart(product.id)}
+                      disabled={addedToCartId === product.id}
+                    >
+                      {addedToCartId === product.id ? (
+                        <><i className="bi bi-check"></i> Added!</>
+                      ) : (
+                        <><i className="bi bi-cart-plus"></i> Add to Cart</>
+                      )}
+                    </button>
+                  )}
+                </div>
                 <div className="card-body d-flex flex-column">
                   <h5 className="card-title">{product.name}</h5>
                   <p className="product-price">${product.price.toFixed(2)}</p>
