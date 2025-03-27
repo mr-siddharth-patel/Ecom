@@ -773,3 +773,121 @@ a:not(.btn):not(.nav-link):hover:after {
 [data-bs-theme=dark] .checkout-section .form-label {
   color: #e9ecef;
 }
+
+/* Product card styles */
+.product-card {
+  transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+  border: none;
+  border-radius: var(--card-border-radius);
+  overflow: hidden;
+  margin-bottom: 20px;
+  height: 100%;
+  background-color: #343a40;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.product-image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.rounded-product-img {
+  height: 200px;
+  object-fit: contain;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  margin: 10px;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .rounded-product-img {
+  transform: scale(1.05);
+}
+
+.quick-add-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 2;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-weight: 600;
+}
+
+.product-image-container:hover .quick-add-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.product-title-link {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+.product-title-link:hover {
+  color: var(--primary-color);
+}
+
+/* Enhanced quantity selector for product detail page */
+.quantity-selector {
+  display: inline-flex;
+  align-items: center;
+  background-color: #343a40;
+  border-radius: 8px;
+  padding: 5px;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.quantity-input {
+  background-color: #495057;
+  color: #fff;
+  border: 1px solid #6c757d;
+  border-radius: 4px;
+  font-weight: bold;
+  width: 60px;
+}
+
+.quantity-input:focus {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+/* Enhanced order list in chat */
+.orders-list {
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 8px;
+}
+
+.cancellable-order {
+  border-left: 4px solid #10b981 !important;
+}
+
+.non-cancellable-order {
+  border-left: 4px solid #6c757d !important;
+  opacity: 0.8;
+}
+
+.order-id {
+  color: #e9ecef;
+  font-size: 1.1rem;
+}
+
+.order-total {
+  color: #10b981;
+}
+
+.order-date {
+  font-size: 0.85rem;
+}

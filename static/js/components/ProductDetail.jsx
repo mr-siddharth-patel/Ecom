@@ -41,6 +41,12 @@ const ProductDetail = () => {
     toast.show();
   };
   
+  const handleBuyNow = () => {
+    // Add to cart and redirect to checkout
+    addToCart(product.id, quantity);
+    navigate('/checkout');
+  };
+  
   if (loading) {
     return (
       <div className="text-center my-5">
@@ -114,10 +120,11 @@ const ProductDetail = () => {
           
           <p className="mb-4">{product.description}</p>
           
-          <div className="d-flex align-items-center mb-4">
-            <div className="input-group me-3" style={{maxWidth: '150px'}}>
+          <div className="mb-4">
+            <label className="form-label text-light">Quantity:</label>
+            <div className="d-flex align-items-center quantity-selector">
               <button 
-                className="btn btn-outline-secondary" 
+                className="btn btn-outline-light" 
                 type="button"
                 onClick={() => quantity > 1 && setQuantity(quantity - 1)}
               >
@@ -125,28 +132,40 @@ const ProductDetail = () => {
               </button>
               <input 
                 type="number" 
-                className="form-control text-center"
+                className="form-control quantity-input text-center mx-2"
                 min="1"
                 max={product.stock}
                 value={quantity}
                 onChange={handleQuantityChange}
+                style={{maxWidth: '70px'}}
               />
               <button 
-                className="btn btn-outline-secondary" 
+                className="btn btn-outline-light" 
                 type="button"
                 onClick={() => quantity < product.stock && setQuantity(quantity + 1)}
               >
                 <i className="bi bi-plus"></i>
               </button>
             </div>
-            
+          </div>
+          
+          <div className="d-flex mb-4">
             <button 
-              className="btn btn-primary"
+              className="btn btn-lg btn-primary me-2 flex-grow-1"
               onClick={handleAddToCart}
               disabled={product.stock === 0}
             >
               <i className="bi bi-cart-plus me-1"></i>
               Add to Cart
+            </button>
+            
+            <button 
+              className="btn btn-lg btn-success flex-grow-1"
+              onClick={handleBuyNow}
+              disabled={product.stock === 0}
+            >
+              <i className="bi bi-lightning-fill me-1"></i>
+              Buy Now
             </button>
           </div>
           

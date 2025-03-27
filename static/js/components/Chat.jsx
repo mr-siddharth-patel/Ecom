@@ -58,20 +58,25 @@ const Chat = () => {
     fetch('/api/orders')
       .then(response => response.json())
       .then(data => {
-        // Filter orders that are in a cancellable state
-        const cancellableOrders = data.filter(order => 
-          ['Confirmed', 'Processing', 'Preparing'].includes(order.status)
-        );
-        
-        setUserOrders(cancellableOrders);
+        // Get all user orders
+        setUserOrders(data);
         setShowingOrders(true);
         setLoading(false);
         
+        // Find cancellable orders (those in 'Confirmed' or 'Processing' state)
+        const cancellableOrders = data.filter(order => 
+          ['Confirmed', 'Processing'].includes(order.status)
+        );
+        
         // Add bot message about orders
         const botMessage = { 
-          text: cancellableOrders.length > 0 
-            ? "Here are your orders that can be cancelled. Select the ones you'd like to cancel:" 
-            : "You don't have any orders that can be cancelled at the moment. Orders that are already shipped or delivered cannot be cancelled.",
+          text: data.length > 0 
+            ? `Here are all your orders. You have ${data.length} orders total. ${
+                cancellableOrders.length > 0 
+                  ? `You can select and cancel the ${cancellableOrders.length} orders that are in Confirmed or Processing state.` 
+                  : "You don't have any orders that can be cancelled at the moment."
+              }`
+            : "You don't have any orders at the moment.",
           isBot: true 
         };
         setMessages(prev => [...prev, botMessage]);
@@ -158,15 +163,37 @@ const Chat = () => {
       setSelectedOrders([]);
     }
     
-    // Check for cancel/order keywords
+    // Check for order-related keywords
     const lowerCaseMessage = message.toLowerCase();
-    if ((lowerCaseMessage.includes('cancel') && lowerCaseMessage.includes('order')) || 
-        (lowerCaseMessage.includes('view') && lowerCaseMessage.includes('order'))) {
+    
+    // This catches phrases like "show me my orders", "what are my orders", etc.
+    if (lowerCaseMessage.includes('order') && 
+        (lowerCaseMessage.includes('my') || lowerCaseMessage.includes('show') || 
+         lowerCaseMessage.includes('view') || lowerCaseMessage.includes('see') || 
+         lowerCaseMessage.includes('what') || lowerCaseMessage.includes('display') ||
+         lowerCaseMessage.includes('list') || lowerCaseMessage.includes('all'))) {
       
       if (!isUserAuthenticated) {
         // Add bot response for unauthenticated users
         const botMessage = { 
-          text: "To view or cancel orders, you need to be signed in. Please sign in to your account first.", 
+          text: "To view your orders, you need to be signed in. Please sign in to your account first.", 
+          isBot: true 
+        };
+        setMessages(prev => [...prev, botMessage]);
+        return;
+      }
+      
+      // Fetch user orders
+      fetchUserOrders();
+      return;
+    }
+    
+    // Handle order cancellation requests
+    if (lowerCaseMessage.includes('cancel') && lowerCaseMessage.includes('order')) {
+      if (!isUserAuthenticated) {
+        // Add bot response for unauthenticated users
+        const botMessage = { 
+          text: "To cancel orders, you need to be signed in. Please sign in to your account first.", 
           isBot: true 
         };
         setMessages(prev => [...prev, botMessage]);
@@ -248,43 +275,103 @@ const Chat = () => {
   const renderOrdersList = () => {
     if (!showingOrders || userOrders.length === 0) return null;
     
+    // Determine if an order is cancellable based on its status
+    const isOrderCancellable = (status) => ['Confirmed', 'Processing'].includes(status);
+    
     return (
       <div className="orders-selection mt-3">
-        <div className="list-group">
-          {userOrders.map(order => (
-            <div 
-              key={order.order_id} 
-              className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${
-                selectedOrders.includes(order.order_id) ? 'active' : ''
-              }`}
-              onClick={() => handleOrderSelection(order.order_id)}
-            >
-              <div>
-                <div className="fw-bold">Order #{order.order_id}</div>
-                <div className="small">
-                  <span className={`badge bg-${
-                    order.status === 'Confirmed' ? 'info' : 
-                    order.status === 'Processing' ? 'primary' : 'warning'
-                  }`}>
-                    {order.status}
-                  </span>
-                  <span className="ms-2">${order.total.toFixed(2)}</span>
-                  <span className="ms-2">{new Date(order.date_placed).toLocaleDateString()}</span>
+        <div className="list-group orders-list">
+          {userOrders.map(order => {
+            const cancellable = isOrderCancellable(order.status);
+            
+            return (
+              <div 
+                key={order.order_id} 
+                className={`list-group-item list-group-item-action d-flex justify-content-between align-items-start ${
+                  selectedOrders.includes(order.order_id) ? 'active' : ''
+                } ${cancellable ? 'cancellable-order' : 'non-cancellable-order'}`}
+                onClick={() => cancellable && handleOrderSelection(order.order_id)}
+                style={{ cursor: cancellable ? 'pointer' : 'default' }}
+              >
+                <div className="order-details">
+                  <div className="d-flex justify-content-between align-items-center w-100">
+                    <h6 className="mb-1 order-id">Order #{order.order_id}</h6>
+                    <small className="text-muted order-date">{new Date(order.date_placed).toLocaleDateString()}</small>
+                  </div>
+                  
+                  <div className="d-flex align-items-center mb-1 mt-1">
+                    <span className={`badge ${
+                      order.status === 'Confirmed' ? 'bg-info' : 
+                      order.status === 'Processing' ? 'bg-primary' : 
+                      order.status === 'Shipped' ? 'bg-warning' :
+                      order.status === 'Delivered' ? 'bg-success' :
+                      order.status === 'Cancelled' ? 'bg-danger' : 'bg-secondary'
+                    }`}>
+                      {order.status}
+                    </span>
+                    <span className="ms-2 order-total fw-bold">${order.total.toFixed(2)}</span>
+                  </div>
+                  
+                  {order.tracking_number && (
+                    <small className="d-block text-muted">
+                      <i className="bi bi-truck me-1"></i>
+                      Tracking: {order.tracking_number}
+                    </small>
+                  )}
+                  
+                  {!cancellable && (
+                    <small className="d-block mt-1 text-muted">
+                      {order.status === 'Shipped' || order.status === 'Delivered' ? 
+                        <i>This order can't be cancelled because it has already been {order.status.toLowerCase()}.</i> :
+                        order.status === 'Cancelled' ?
+                        <i>This order has already been cancelled.</i> :
+                        <i>This order can't be modified.</i>
+                      }
+                    </small>
+                  )}
                 </div>
+                
+                {cancellable && (
+                  <div className="form-check ms-3 mt-1">
+                    <input 
+                      className="form-check-input" 
+                      type="checkbox" 
+                      checked={selectedOrders.includes(order.order_id)}
+                      onChange={() => {}} // Handled by the parent div's onClick
+                      onClick={e => e.stopPropagation()}
+                      aria-label={`Select order ${order.order_id} for cancellation`}
+                    />
+                  </div>
+                )}
               </div>
-              <div className="form-check">
-                <input 
-                  className="form-check-input" 
-                  type="checkbox" 
-                  checked={selectedOrders.includes(order.order_id)}
-                  onChange={() => {}} // Handled by the parent div's onClick
-                  onClick={e => e.stopPropagation()}
-                />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+        
         {renderOrderActionButtons()}
+        
+        {userOrders.length > 0 && userOrders.length !== selectedOrders.length && (
+          <div className="d-flex justify-content-end mt-2">
+            <button 
+              className="btn btn-sm btn-link"
+              onClick={() => setSelectedOrders([])}
+              disabled={selectedOrders.length === 0}
+            >
+              Clear selection
+            </button>
+            <button 
+              className="btn btn-sm btn-link ms-2"
+              onClick={() => {
+                const cancellableOrderIds = userOrders
+                  .filter(order => ['Confirmed', 'Processing'].includes(order.status))
+                  .map(order => order.order_id);
+                setSelectedOrders(cancellableOrderIds);
+              }}
+            >
+              Select all cancellable
+            </button>
+          </div>
+        )}
       </div>
     );
   };
