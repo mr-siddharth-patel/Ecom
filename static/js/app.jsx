@@ -106,11 +106,12 @@ const Home = () => {
                       className="btn btn-sm btn-primary quick-add-btn position-absolute top-0 end-0 m-2"
                       onClick={() => handleAddToCart(product.id)}
                       disabled={addedToCartId === product.id}
+                      style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}
                     >
                       {addedToCartId === product.id ? (
-                        <><i className="bi bi-check"></i> Added!</>
+                        <><i className="bi bi-check"></i></>
                       ) : (
-                        <><i className="bi bi-cart-plus"></i> Add to Cart</>
+                        <><i className="bi bi-cart-plus"></i></>
                       )}
                     </button>
                   )}

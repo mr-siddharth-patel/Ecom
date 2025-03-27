@@ -300,12 +300,12 @@ const Chat = () => {
                   </div>
                   
                   <div className="d-flex align-items-center mb-1 mt-1">
-                    <span className={`badge ${
-                      order.status === 'Confirmed' ? 'bg-info' : 
-                      order.status === 'Processing' ? 'bg-primary' : 
-                      order.status === 'Shipped' ? 'bg-warning' :
-                      order.status === 'Delivered' ? 'bg-success' :
-                      order.status === 'Cancelled' ? 'bg-danger' : 'bg-secondary'
+                    <span className={`badge status-badge ${
+                      order.status === 'Confirmed' ? 'badge-confirmed' : 
+                      order.status === 'Processing' ? 'badge-processing' : 
+                      order.status === 'Shipped' ? 'badge-shipped' :
+                      order.status === 'Delivered' ? 'badge-delivered' :
+                      order.status === 'Cancelled' ? 'badge-cancelled' : 'bg-secondary'
                     }`}>
                       {order.status}
                     </span>
@@ -388,7 +388,7 @@ const Chat = () => {
         <div className="chat-window">
           <div className="chat-header">
             <i className="bi bi-robot me-2"></i>
-            ShopSmart Buddy 🤖
+            Alpha Bot 🤖
           </div>
           
           <div className="chat-messages">
