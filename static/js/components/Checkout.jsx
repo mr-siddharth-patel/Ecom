@@ -55,10 +55,10 @@ const Checkout = () => {
         // Clear the cart
         clearCart();
         
-        // Show success message and redirect
+        // Show success message and redirect to orders page
         setLoading(false);
-        alert('Order placed successfully!');
-        navigate('/');
+        alert('Order placed successfully! You can view your order details in your orders page.');
+        navigate('/orders');
       })
       .catch(error => {
         console.error('Error placing order:', error);

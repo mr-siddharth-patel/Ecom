@@ -28,6 +28,7 @@ const App = () => {
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
               <Route path="/faqs" element={<FaqPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
@@ -252,6 +253,16 @@ const CheckoutPage = () => {
     <div className="container my-5">
       <h1 className="mb-4">Almost There! 🚀</h1>
       <Checkout />
+    </div>
+  );
+};
+
+// Orders Page Component
+const OrdersPage = () => {
+  return (
+    <div className="container my-5">
+      <h1 className="mb-4">Your Order History 📦</h1>
+      <Orders />
     </div>
   );
 };

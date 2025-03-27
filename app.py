@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, render_template, session
 from flask_cors import CORS
 import data
 from chat import get_groq_response
+import order_data
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -119,3 +120,29 @@ def chat():
 def get_faqs():
     faqs = data.get_faqs()
     return jsonify(faqs)
+
+# Order-related routes
+@app.route('/api/orders', methods=['GET'])
+def get_orders():
+    # For demo purposes, return all orders 
+    # In a real app, you would filter by authenticated user
+    orders = order_data.get_orders()
+    return jsonify(orders)
+
+@app.route('/api/orders/<order_id>', methods=['GET'])
+def get_order(order_id):
+    order = order_data.get_order_by_id(order_id)
+    if order:
+        return jsonify(order)
+    return jsonify({"error": "Order not found"}), 404
+
+@app.route('/api/orders/recent', methods=['GET'])
+def get_recent_orders():
+    limit = request.args.get('limit', 5, type=int)
+    orders = order_data.get_recent_orders(limit)
+    return jsonify(orders)
+
+@app.route('/api/orders/status/<status>', methods=['GET'])
+def get_orders_by_status(status):
+    orders = order_data.get_orders_by_status(status)
+    return jsonify(orders)
