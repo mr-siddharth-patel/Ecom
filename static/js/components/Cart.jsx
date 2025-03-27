@@ -1,7 +1,7 @@
 // Cart Component
 
 const { useState, useEffect, useContext } = React;
-const { Link, useNavigate } = ReactRouterDOM;
+const { Link, useNavigate } = window.ReactRouterDOM;
 
 const Cart = () => {
   const { cartItems, updateQuantity, removeFromCart } = useContext(CartContext);

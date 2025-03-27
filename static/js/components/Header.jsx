@@ -1,6 +1,6 @@
 // Header Component
 
-const { Link, useNavigate } = ReactRouterDOM;
+const { Link, useNavigate } = window.ReactRouterDOM;
 const { useContext } = React;
 
 const Header = () => {

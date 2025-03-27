@@ -1,7 +1,7 @@
 // SearchBar Component
 
 const { useState } = React;
-const { useNavigate, useSearchParams } = ReactRouterDOM;
+const { useNavigate, useSearchParams } = window.ReactRouterDOM;
 
 const SearchBar = () => {
   const [searchParams] = useSearchParams();

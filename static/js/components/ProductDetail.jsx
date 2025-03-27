@@ -1,7 +1,7 @@
 // ProductDetail Component
 
 const { useState, useEffect, useContext } = React;
-const { useParams, useNavigate } = ReactRouterDOM;
+const { useParams, useNavigate, Link } = window.ReactRouterDOM;
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -79,12 +79,12 @@ const ProductDetail = () => {
           <nav aria-label="breadcrumb" className="mb-3">
             <ol className="breadcrumb">
               <li className="breadcrumb-item">
-                <ReactRouterDOM.Link to="/products">Products</ReactRouterDOM.Link>
+                <Link to="/products">Products</Link>
               </li>
               <li className="breadcrumb-item">
-                <ReactRouterDOM.Link to={`/products?category=${product.category}`}>
+                <Link to={`/products?category=${product.category}`}>
                   {product.category}
-                </ReactRouterDOM.Link>
+                </Link>
               </li>
               <li className="breadcrumb-item active" aria-current="page">{product.name}</li>
             </ol>
@@ -178,9 +178,9 @@ const ProductDetail = () => {
           <div className="toast-body">
             {product.name} has been added to your cart.
             <div className="mt-2 pt-2 border-top">
-              <ReactRouterDOM.Link to="/cart" className="btn btn-primary btn-sm">
+              <Link to="/cart" className="btn btn-primary btn-sm">
                 View Cart
-              </ReactRouterDOM.Link>
+              </Link>
             </div>
           </div>
         </div>

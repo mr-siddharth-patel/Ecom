@@ -1,7 +1,19 @@
 // Main App Component
 
-const { BrowserRouter, Routes, Route, Navigate } = ReactRouterDOM;
-const { useState, useEffect } = React;
+// Get React Router DOM components
+const { 
+  BrowserRouter, 
+  Routes, 
+  Route, 
+  Navigate, 
+  Link, 
+  useNavigate, 
+  useParams,
+  useSearchParams 
+} = window.ReactRouterDOM;
+
+// Get React hooks
+const { useState, useEffect, useContext, useRef } = React;
 
 const App = () => {
   return (
@@ -57,12 +69,12 @@ const Home = () => {
         <div className="container text-center">
           <h1>Discover Amazing Products</h1>
           <p className="lead mb-4">Shop the latest trends with fast shipping and excellent customer support</p>
-          <ReactRouterDOM.Link to="/products" className="btn btn-light btn-lg px-4 me-2">
+          <Link to="/products" className="btn btn-light btn-lg px-4 me-2">
             Shop Now
-          </ReactRouterDOM.Link>
-          <ReactRouterDOM.Link to="/faqs" className="btn btn-outline-light btn-lg px-4">
+          </Link>
+          <Link to="/faqs" className="btn btn-outline-light btn-lg px-4">
             Learn More
-          </ReactRouterDOM.Link>
+          </Link>
         </div>
       </section>
 
@@ -84,18 +96,18 @@ const Home = () => {
                     <span className="ms-1 text-muted">({product.rating})</span>
                   </div>
                   <p className="card-text flex-grow-1">{product.description.substring(0, 80)}...</p>
-                  <ReactRouterDOM.Link to={`/products/${product.id}`} className="btn btn-primary mt-auto">
+                  <Link to={`/products/${product.id}`} className="btn btn-primary mt-auto">
                     View Details
-                  </ReactRouterDOM.Link>
+                  </Link>
                 </div>
               </div>
             </div>
           ))}
         </div>
         <div className="text-center mt-4">
-          <ReactRouterDOM.Link to="/products" className="btn btn-outline-primary">
+          <Link to="/products" className="btn btn-outline-primary">
             View All Products
-          </ReactRouterDOM.Link>
+          </Link>
         </div>
       </section>
 
@@ -111,12 +123,12 @@ const Home = () => {
                     <h3 className="h5 mb-0">{category}</h3>
                   </div>
                   <div className="card-footer bg-white border-0 pb-3">
-                    <ReactRouterDOM.Link 
+                    <Link 
                       to={`/products?category=${category}`} 
                       className="btn btn-sm btn-outline-primary"
                     >
                       Browse {category}
-                    </ReactRouterDOM.Link>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -186,9 +198,9 @@ const Home = () => {
                 </div>
               </div>
               <div className="text-center mt-3">
-                <ReactRouterDOM.Link to="/faqs" className="btn btn-link">
+                <Link to="/faqs" className="btn btn-link">
                   View All FAQs <i className="bi bi-arrow-right"></i>
-                </ReactRouterDOM.Link>
+                </Link>
               </div>
             </div>
           </div>

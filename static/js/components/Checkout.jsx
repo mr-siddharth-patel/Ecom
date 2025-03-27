@@ -1,7 +1,7 @@
 // Checkout Component
 
 const { useState, useContext } = React;
-const { useNavigate } = ReactRouterDOM;
+const { useNavigate, Link } = window.ReactRouterDOM;
 
 const Checkout = () => {
   const { cartItems, clearCart } = useContext(CartContext);
@@ -75,9 +75,9 @@ const Checkout = () => {
         </div>
         <h3 className="mb-3">Your cart is empty</h3>
         <p className="text-muted mb-4">You need to add items to your cart before checkout.</p>
-        <ReactRouterDOM.Link to="/products" className="btn btn-primary">
+        <Link to="/products" className="btn btn-primary">
           Start Shopping
-        </ReactRouterDOM.Link>
+        </Link>
       </div>
     );
   }

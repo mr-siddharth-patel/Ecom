@@ -1,7 +1,7 @@
 // CategoryNav Component
 
 const { useState, useEffect } = React;
-const { Link, useSearchParams } = ReactRouterDOM;
+const { Link, useSearchParams } = window.ReactRouterDOM;
 
 const CategoryNav = () => {
   const [categories, setCategories] = useState([]);

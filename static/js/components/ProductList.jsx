@@ -1,7 +1,7 @@
 // ProductList Component
 
 const { useState, useEffect } = React;
-const { useSearchParams, Link } = ReactRouterDOM;
+const { useSearchParams, Link } = window.ReactRouterDOM;
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);

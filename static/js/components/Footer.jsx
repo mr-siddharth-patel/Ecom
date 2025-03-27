@@ -1,5 +1,7 @@
 // Footer Component
 
+const { Link } = window.ReactRouterDOM;
+
 const Footer = () => {
   return (
     <footer className="bg-dark text-white py-5 mt-5">
@@ -30,24 +32,24 @@ const Footer = () => {
             <h5 className="mb-3">Shop</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <ReactRouterDOM.Link to="/products?category=Electronics" className="text-muted text-decoration-none">
+                <Link to="/products?category=Electronics" className="text-muted text-decoration-none">
                   Electronics
-                </ReactRouterDOM.Link>
+                </Link>
               </li>
               <li className="mb-2">
-                <ReactRouterDOM.Link to="/products?category=Clothing" className="text-muted text-decoration-none">
+                <Link to="/products?category=Clothing" className="text-muted text-decoration-none">
                   Clothing
-                </ReactRouterDOM.Link>
+                </Link>
               </li>
               <li className="mb-2">
-                <ReactRouterDOM.Link to="/products?category=Footwear" className="text-muted text-decoration-none">
+                <Link to="/products?category=Footwear" className="text-muted text-decoration-none">
                   Footwear
-                </ReactRouterDOM.Link>
+                </Link>
               </li>
               <li>
-                <ReactRouterDOM.Link to="/products?category=Home" className="text-muted text-decoration-none">
+                <Link to="/products?category=Home" className="text-muted text-decoration-none">
                   Home
-                </ReactRouterDOM.Link>
+                </Link>
               </li>
             </ul>
           </div>
@@ -74,9 +76,9 @@ const Footer = () => {
             <h5 className="mb-3">Support</h5>
             <ul className="list-unstyled">
               <li className="mb-2">
-                <ReactRouterDOM.Link to="/faqs" className="text-muted text-decoration-none">
+                <Link to="/faqs" className="text-muted text-decoration-none">
                   FAQs
-                </ReactRouterDOM.Link>
+                </Link>
               </li>
               <li className="mb-2">
                 <a href="#" className="text-muted text-decoration-none">Shipping</a>
