@@ -14,7 +14,7 @@ const Chat = () => {
     if (isOpen && messages.length === 0) {
       setMessages([
         {
-          text: "👋 Hi there! I'm your AI support assistant. How can I help you today?",
+          text: "👋 Hey there! I'm your friendly AI buddy - I keep things short & sweet. How can I help you today?",
           isBot: true
         }
       ]);
@@ -63,7 +63,7 @@ const Chat = () => {
         console.error('Error getting chat response:', error);
         // Add error message
         const errorMessage = { 
-          text: "I'm sorry, I'm having trouble connecting right now. Please try again later.", 
+          text: "Oops! My circuits are tangled. Can you try again in a sec? 🤖", 
           isBot: true 
         };
         setMessages(prev => [...prev, errorMessage]);
@@ -83,7 +83,7 @@ const Chat = () => {
         <div className="chat-window">
           <div className="chat-header">
             <i className="bi bi-robot me-2"></i>
-            Support Assistant
+            ShopSmart Buddy 🤖
           </div>
           
           <div className="chat-messages">
@@ -102,7 +102,7 @@ const Chat = () => {
                   <div className="spinner-grow spinner-grow-sm me-2" role="status">
                     <span className="visually-hidden">Loading...</span>
                   </div>
-                  <span>Thinking...</span>
+                  <span>Hmm, let me think... 🤔</span>
                 </div>
               </div>
             )}

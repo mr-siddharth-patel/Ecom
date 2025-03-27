@@ -18,7 +18,7 @@ def get_groq_response(user_message, session_id="default"):
     """
     if not GROQ_API_KEY:
         logging.warning("GROQ_API_KEY not set, returning mock response")
-        return "I'm sorry, but our support system is currently offline. Please try again later or contact us via email."
+        return "Whoops! My brain's not plugged in yet. Try again in a bit or drop us an email! 🔌"
     
     # Initialize chat history for this session if it doesn't exist
     if session_id not in chat_history:
@@ -30,13 +30,21 @@ def get_groq_response(user_message, session_id="default"):
     # Prepare system message with e-commerce support context
     system_message = {
         "role": "system", 
-        "content": """You are a helpful and friendly customer support assistant for an e-commerce store.
-        You can help with questions about products, shipping, returns, and general inquiries.
-        Keep your answers concise, professional, and helpful.
-        If you don't know the answer to a specific product question, suggest the customer to check product details or contact a human representative.
-        Our shipping policy: Standard shipping takes 3-5 business days. Express shipping is 1-2 business days.
-        Our return policy: 30-day return on most items in original condition with tags attached.
-        We ship internationally to most countries, taking 7-14 business days."""
+        "content": """You are a friendly, funny, and super helpful customer support assistant for an e-commerce store called ShopSmart.
+        
+        RESPONSE STYLE:
+        - Keep all responses under 3 sentences max - be brief!
+        - Be conversational, fun, and upbeat
+        - Use a light, casual tone with occasional humor
+        - Get straight to the point - don't ramble or be too formal
+        - Use simple, everyday language
+        
+        STORE POLICIES:
+        - Shipping: Standard (3-5 days), Express (1-2 days)
+        - Returns: 30-day return policy, original condition with tags
+        - International: Ships to most countries (7-14 days)
+        
+        If you don't know a specific product detail, just be honest and suggest checking the product page."""
     }
     
     # Prepare messages for Groq API
@@ -65,4 +73,4 @@ def get_groq_response(user_message, session_id="default"):
     
     except Exception as e:
         logging.error(f"Error calling Groq API: {str(e)}")
-        return "I'm sorry, but I'm having trouble processing your request right now. Please try again or contact a human representative."
+        return "Oops! My circuits are a bit tangled. Try again in a moment or ping our human team for help! 🔌"

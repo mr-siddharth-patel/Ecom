@@ -67,20 +67,20 @@ const Home = () => {
       {/* Hero Section */}
       <section className="hero">
         <div className="container text-center">
-          <h1>Discover Amazing Products</h1>
-          <p className="lead mb-4">Shop the latest trends with fast shipping and excellent customer support</p>
+          <h1>Hey there, Shopping Genius! 🛍️</h1>
+          <p className="lead mb-4">Find cool stuff, get it fast, and chat with our friendly AI if you need help. Simple!</p>
           <Link to="/products" className="btn btn-light btn-lg px-4 me-2">
-            Shop Now
+            Let's Shop! 
           </Link>
           <Link to="/faqs" className="btn btn-outline-light btn-lg px-4">
-            Learn More
+            Got Questions?
           </Link>
         </div>
       </section>
 
       {/* Featured Products Section */}
       <section className="container my-5">
-        <h2 className="text-center mb-4">Featured Products</h2>
+        <h2 className="text-center mb-4">Check These Out! ✨</h2>
         <div className="row g-4">
           {featuredProducts.map(product => (
             <div key={product.id} className="col-md-6 col-lg-3">
@@ -97,7 +97,7 @@ const Home = () => {
                   </div>
                   <p className="card-text flex-grow-1">{product.description.substring(0, 80)}...</p>
                   <Link to={`/products/${product.id}`} className="btn btn-primary mt-auto">
-                    View Details
+                    <i className="bi bi-eye me-1"></i> Take a Peek!
                   </Link>
                 </div>
               </div>
@@ -106,7 +106,7 @@ const Home = () => {
         </div>
         <div className="text-center mt-4">
           <Link to="/products" className="btn btn-outline-primary">
-            View All Products
+            <i className="bi bi-grid-3x3-gap me-1"></i> See Everything We've Got!
           </Link>
         </div>
       </section>
@@ -114,7 +114,7 @@ const Home = () => {
       {/* Categories Section */}
       <section className="bg-light py-5 my-5">
         <div className="container">
-          <h2 className="text-center mb-4">Shop By Category</h2>
+          <h2 className="text-center mb-4">Pick Your Passion! 🔍</h2>
           <div className="row g-4 justify-content-center">
             {categories.map((category, index) => (
               <div key={index} className="col-6 col-md-3">
@@ -141,8 +141,8 @@ const Home = () => {
       <section className="container mb-5">
         <div className="row align-items-center">
           <div className="col-md-6">
-            <h2 className="mb-3">Need Help? We're Here For You</h2>
-            <p className="lead mb-4">Our AI-powered support assistant is available 24/7 to answer your questions about products, shipping, returns, and more.</p>
+            <h2 className="mb-3">Stuck? Our AI Buddy Can Help! 🤖</h2>
+            <p className="lead mb-4">Got questions? Our friendly AI is here 24/7 - no complicated phone menus, just quick answers when you need them!</p>
             <button 
               className="btn btn-gradient btn-lg"
               onClick={() => {
@@ -152,7 +152,7 @@ const Home = () => {
               }}
             >
               <i className="bi bi-chat-dots me-2"></i>
-              Start Chat Support
+              Chat With Our Bot!
             </button>
           </div>
           <div className="col-md-6 mt-4 mt-md-0">
@@ -240,7 +240,7 @@ const ProductDetailPage = () => {
 const CartPage = () => {
   return (
     <div className="container my-5">
-      <h1 className="mb-4">Your Shopping Cart</h1>
+      <h1 className="mb-4">Your Awesome Cart! 🛒</h1>
       <Cart />
     </div>
   );
@@ -250,7 +250,7 @@ const CartPage = () => {
 const CheckoutPage = () => {
   return (
     <div className="container my-5">
-      <h1 className="mb-4">Checkout</h1>
+      <h1 className="mb-4">Almost There! 🚀</h1>
       <Checkout />
     </div>
   );
@@ -270,7 +270,7 @@ const FaqPage = () => {
 
   return (
     <div className="container my-5">
-      <h1 className="mb-4">Frequently Asked Questions</h1>
+      <h1 className="mb-4">Got Questions? We've Got Answers! 💬</h1>
       <div className="row">
         <div className="col-lg-8 mx-auto">
           <div className="accordion" id="faqAccordionFull">
@@ -300,8 +300,8 @@ const FaqPage = () => {
           </div>
           
           <div className="mt-5 p-4 bg-light rounded-3">
-            <h2 className="h4">Still have questions?</h2>
-            <p>Our AI-powered support assistant is available 24/7 to help you with any questions you might have.</p>
+            <h2 className="h4">Still scratching your head? 🤔</h2>
+            <p>Our AI buddy knows all the answers! Just click below and ask away - no waiting in line!</p>
             <button 
               className="btn btn-gradient"
               onClick={() => {
@@ -311,7 +311,7 @@ const FaqPage = () => {
               }}
             >
               <i className="bi bi-chat-dots me-2"></i>
-              Start Chat Support
+              Ask Our AI Buddy!
             </button>
           </div>
         </div>
