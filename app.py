@@ -90,7 +90,8 @@ def handle_cart():
         # Check if product is already in cart
         for item in session['cart']:
             if item['product_id'] == product_id:
-                item['quantity'] += quantity
+                # Set the quantity directly instead of incrementing it
+                item['quantity'] = quantity
                 session.modified = True
                 return jsonify({"message": "Cart updated"})
         

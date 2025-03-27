@@ -634,9 +634,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .badge-processing {
-  color: #000 !important;
+  color: #3d3d3d !important; /* Darker text for better contrast on yellow */
   background-color: #fbbf24 !important; /* Yellow */
   border: 1px solid #f59e0b;
+  font-weight: 600; /* Making text bolder for better visibility */
 }
 
 .badge-shipped {
