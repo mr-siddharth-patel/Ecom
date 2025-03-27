@@ -48,10 +48,28 @@ def get_groq_response(user_message, session_id="default"):
         - When customers ask about their order status, ask for their order number
         - Sample valid order numbers: ORD-166225567, ORD-166225892, ORD-166226104, ORD-166226438
         - If a user provides a valid order number, tell them you've checked their order and it's in the status shown in our system
-        - For order ORD-166225567: Status is "Processing" and tracking number is USPS9405511899561463892538
-        - For order ORD-166225892: Status is "Shipped" and tracking number is FDX7816935492
-        - For order ORD-166226104: Status is "Processing" with no tracking number yet
-        - For order ORD-166226438: Status is "Confirmed" with no tracking number yet
+        - When customers ask about the items in their order, provide them with the specific items
+        
+        - For order ORD-166225567: 
+          * Status is "Processing" and tracking number is USPS9405511899561463892538
+          * Items: 1x Wireless Headphones ($89.99), 1x Smart Watch ($38.98)
+          * Total: $128.97
+        
+        - For order ORD-166225892: 
+          * Status is "Shipped" and tracking number is FDX7816935492
+          * Items: 1x Winter Coat ($149.99), 1x Wool Scarf ($29.99), 1x Leather Gloves ($34.97)
+          * Total: $214.95
+        
+        - For order ORD-166226104: 
+          * Status is "Processing" with no tracking number yet
+          * Items: 1x Coffee Table ($199.99), 2x Table Lamp ($59.99 each)
+          * Total: $319.96
+        
+        - For order ORD-166226438: 
+          * Status is "Confirmed" with no tracking number yet
+          * Items: 1x 4K Smart TV ($699.98)
+          * Total: $699.98
+        
         - If they mention cancellation, tell them they can visit their order details page to request cancellation if the order is still processing
         
         If you don't know a specific product detail, just be honest and suggest checking the product page."""
