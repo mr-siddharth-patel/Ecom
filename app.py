@@ -146,3 +146,11 @@ def get_recent_orders():
 def get_orders_by_status(status):
     orders = order_data.get_orders_by_status(status)
     return jsonify(orders)
+
+@app.route('/api/orders/<order_id>/cancel', methods=['POST'])
+def cancel_order(order_id):
+    result = order_data.cancel_order(order_id)
+    if result["success"]:
+        return jsonify(result)
+    else:
+        return jsonify(result), 400

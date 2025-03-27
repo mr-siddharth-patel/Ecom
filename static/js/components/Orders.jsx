@@ -6,6 +6,10 @@ const Orders = () => {
   const [error, setError] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState(null);
+  const [cancelSuccess, setCancelSuccess] = useState(null);
 
   // Fetch all orders
   useEffect(() => {
@@ -54,6 +58,58 @@ const Orders = () => {
   const closeOrderDetails = () => {
     setSelectedOrderId(null);
     setSelectedOrder(null);
+  };
+  
+  // Open cancel order modal
+  const openCancelModal = () => {
+    setShowCancelModal(true);
+    setCancelError(null);
+    setCancelSuccess(null);
+  };
+  
+  // Close cancel order modal
+  const closeCancelModal = () => {
+    setShowCancelModal(false);
+    // If order was successfully cancelled, refresh orders list
+    if (cancelSuccess) {
+      setSelectedOrderId(null);
+      setSelectedOrder(null);
+      // Reload all orders to get updated status
+      axios.get('/api/orders')
+        .then(response => {
+          setOrders(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching orders:', error);
+        });
+    }
+  };
+  
+  // Handle order cancellation
+  const handleCancelOrder = () => {
+    if (!selectedOrder) return;
+    
+    setCancelLoading(true);
+    setCancelError(null);
+    setCancelSuccess(null);
+    
+    axios.post(`/api/orders/${selectedOrder.order_id}/cancel`)
+      .then(response => {
+        setCancelLoading(false);
+        setCancelSuccess(response.data.message);
+        // Update local order status
+        if (response.data.success) {
+          setSelectedOrder({
+            ...selectedOrder,
+            status: 'Cancelled'
+          });
+        }
+      })
+      .catch(error => {
+        setCancelLoading(false);
+        setCancelError(error.response?.data?.message || 'Failed to cancel order. Please try again.');
+        console.error('Error cancelling order:', error);
+      });
   };
 
   if (loading && !orders.length) {
@@ -219,7 +275,7 @@ const Orders = () => {
               <i className="bi bi-headset me-1"></i> Contact Support
             </button>
             {selectedOrder.status !== 'Delivered' && selectedOrder.status !== 'Cancelled' && (
-              <button className="btn btn-outline-danger">
+              <button className="btn btn-outline-danger" onClick={openCancelModal}>
                 <i className="bi bi-x-circle me-1"></i> Cancel Order
               </button>
             )}
@@ -269,6 +325,92 @@ const Orders = () => {
             </table>
           </div>
         </div>
+      )}
+      
+      {/* Cancel Order Confirmation Modal */}
+      {showCancelModal && selectedOrder && (
+        <div className="modal fade show" style={{display: 'block'}} tabIndex="-1" role="dialog">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header bg-light">
+                <h5 className="modal-title">Cancel Order</h5>
+                <button type="button" className="btn-close" onClick={closeCancelModal} disabled={cancelLoading}></button>
+              </div>
+              <div className="modal-body">
+                {cancelSuccess ? (
+                  <div className="alert alert-success">
+                    <i className="bi bi-check-circle me-2"></i>
+                    {cancelSuccess}
+                  </div>
+                ) : (
+                  <>
+                    <p>Are you sure you want to cancel order <strong>{selectedOrder.order_id}</strong>?</p>
+                    <p>This action cannot be undone, and the order will be permanently cancelled.</p>
+                    
+                    {cancelError && (
+                      <div className="alert alert-danger">
+                        <i className="bi bi-exclamation-triangle me-2"></i>
+                        {cancelError}
+                      </div>
+                    )}
+                    
+                    <div className="d-flex align-items-center bg-light rounded p-3">
+                      <div className="me-3">
+                        <i className="bi bi-info-circle text-primary fs-4"></i>
+                      </div>
+                      <div>
+                        <p className="mb-0 fs-6">
+                          <strong>Note:</strong> Only orders with status "Processing" or "Confirmed" can be cancelled. 
+                          Orders that have already been shipped cannot be cancelled here.
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="modal-footer">
+                {cancelSuccess ? (
+                  <button type="button" className="btn btn-primary" onClick={closeCancelModal}>
+                    Close
+                  </button>
+                ) : (
+                  <>
+                    <button 
+                      type="button" 
+                      className="btn btn-outline-secondary" 
+                      onClick={closeCancelModal}
+                      disabled={cancelLoading}
+                    >
+                      No, Keep Order
+                    </button>
+                    <button 
+                      type="button" 
+                      className="btn btn-danger" 
+                      onClick={handleCancelOrder}
+                      disabled={cancelLoading}
+                    >
+                      {cancelLoading ? (
+                        <>
+                          <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                          Cancelling...
+                        </>
+                      ) : (
+                        <>
+                          <i className="bi bi-x-circle me-1"></i> Yes, Cancel Order
+                        </>
+                      )}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Modal backdrop */}
+      {showCancelModal && (
+        <div className="modal-backdrop fade show"></div>
       )}
     </div>
   );

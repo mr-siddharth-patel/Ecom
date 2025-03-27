@@ -208,3 +208,18 @@ def get_recent_orders(limit=5):
     # Sort by date (newest first) and return the specified limit
     sorted_orders = sorted(orders, key=lambda x: x["date_placed"], reverse=True)
     return sorted_orders[:limit]
+
+def cancel_order(order_id):
+    """Cancel an order if it's in a cancellable state"""
+    order = get_order_by_id(order_id)
+    if not order:
+        return {"success": False, "message": "Order not found"}
+    
+    # Only allow cancellation for Processing or Confirmed orders
+    if order["status"] in ["Processing", "Confirmed"]:
+        # In a real system, we would update the database
+        # For this demo, we'll update the order in memory
+        order["status"] = "Cancelled"
+        return {"success": True, "message": "Order has been cancelled successfully"}
+    else:
+        return {"success": False, "message": f"Cannot cancel order with status: {order['status']}. Only Processing or Confirmed orders can be cancelled."}
