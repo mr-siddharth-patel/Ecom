@@ -166,11 +166,12 @@ const Orders = () => {
                 </div>
                 <div className="col-md-3">
                   <strong>Status:</strong><br />
-                  <span className={`badge rounded-pill ${
-                    selectedOrder.status === 'Delivered' ? 'bg-success' :
-                    selectedOrder.status === 'Shipped' ? 'bg-info' :
-                    selectedOrder.status === 'Processing' ? 'bg-warning' :
-                    selectedOrder.status === 'Cancelled' ? 'bg-danger' : 'bg-secondary'
+                  <span className={`badge status-badge ${
+                    selectedOrder.status === 'Delivered' ? 'badge-delivered' :
+                    selectedOrder.status === 'Shipped' ? 'badge-shipped' :
+                    selectedOrder.status === 'Processing' ? 'badge-processing' :
+                    selectedOrder.status === 'Confirmed' ? 'badge-confirmed' :
+                    selectedOrder.status === 'Cancelled' ? 'badge-cancelled' : 'bg-secondary'
                   }`}>
                     {selectedOrder.status}
                   </span>
@@ -301,11 +302,12 @@ const Orders = () => {
                     <td>{order.order_id}</td>
                     <td>{formatDate(order.date_placed)}</td>
                     <td>
-                      <span className={`badge rounded-pill ${
-                        order.status === 'Delivered' ? 'bg-success' :
-                        order.status === 'Shipped' ? 'bg-info' :
-                        order.status === 'Processing' ? 'bg-warning' :
-                        order.status === 'Cancelled' ? 'bg-danger' : 'bg-secondary'
+                      <span className={`badge status-badge ${
+                        order.status === 'Delivered' ? 'badge-delivered' :
+                        order.status === 'Shipped' ? 'badge-shipped' :
+                        order.status === 'Processing' ? 'badge-processing' :
+                        order.status === 'Confirmed' ? 'badge-confirmed' :
+                        order.status === 'Cancelled' ? 'badge-cancelled' : 'bg-secondary'
                       }`}>
                         {order.status}
                       </span>
@@ -360,8 +362,9 @@ const Orders = () => {
                       </div>
                       <div>
                         <p className="mb-0 fs-6">
-                          <strong>Note:</strong> Only orders with status "Processing" or "Confirmed" can be cancelled. 
-                          Orders that have already been shipped cannot be cancelled here.
+                          <strong>Note:</strong> <span className="badge-confirmed badge status-badge me-2">Confirmed</span> orders can be cancelled here or via chat.
+                          <span className="badge-processing badge status-badge me-2 mt-2">Processing</span> orders can only be cancelled here, not via chat.
+                          <span className="badge-shipped badge status-badge mt-2">Shipped</span> orders cannot be cancelled through any means.
                         </p>
                       </div>
                     </div>

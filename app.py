@@ -1,26 +1,42 @@
 import os
 import logging
-from flask import Flask, request, jsonify, render_template, session
+import json
+from datetime import datetime
+from flask import Blueprint, request, jsonify, render_template, session, redirect, url_for, flash
 from flask_cors import CORS
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, EmailField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from email_validator import validate_email, EmailNotValidError
+
 import data
 from chat import get_groq_response
 import order_data
+from models import User, Order, OrderItem, Address
+from main import db
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Initialize Flask app
-app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev_secret_key")
-CORS(app)
+# Initialize Blueprints
+main_bp = Blueprint('main', __name__)
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-# Routes
-@app.route('/')
+# Register all blueprints
+def register_blueprints(app):
+    app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp)
+    CORS(app)
+
+# Main routes
+@main_bp.route('/')
 def index():
     return render_template('index.html')
 
 # API Routes
-@app.route('/api/products', methods=['GET'])
+@main_bp.route('/api/products', methods=['GET'])
 def get_products():
     category = request.args.get('category')
     search = request.args.get('search')
@@ -34,19 +50,19 @@ def get_products():
         
     return jsonify(products)
 
-@app.route('/api/products/<int:product_id>', methods=['GET'])
+@main_bp.route('/api/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
     product = data.get_product_by_id(product_id)
     if product:
         return jsonify(product)
     return jsonify({"error": "Product not found"}), 404
 
-@app.route('/api/categories', methods=['GET'])
+@main_bp.route('/api/categories', methods=['GET'])
 def get_categories():
     categories = data.get_all_categories()
     return jsonify(categories)
 
-@app.route('/api/cart', methods=['GET', 'POST', 'DELETE'])
+@main_bp.route('/api/cart', methods=['GET', 'POST', 'DELETE'])
 def handle_cart():
     if 'cart' not in session:
         session['cart'] = []
@@ -92,7 +108,7 @@ def handle_cart():
         session.modified = True
         return jsonify({"message": "Item removed from cart"})
 
-@app.route('/api/checkout', methods=['POST'])
+@main_bp.route('/api/checkout', methods=['POST'])
 def checkout():
     # In a real application, you would process payment and create an order
     # For this MVP, we'll just clear the cart
@@ -100,7 +116,7 @@ def checkout():
     session.modified = True
     return jsonify({"message": "Order placed successfully"})
 
-@app.route('/api/chat', methods=['POST'])
+@main_bp.route('/api/chat', methods=['POST'])
 def chat():
     data = request.json
     user_message = data.get('message', '')
@@ -116,41 +132,243 @@ def chat():
         logging.error(f"Error getting Groq response: {str(e)}")
         return jsonify({"error": "Failed to get response from support system"}), 500
 
-@app.route('/api/faqs', methods=['GET'])
+@main_bp.route('/api/faqs', methods=['GET'])
 def get_faqs():
     faqs = data.get_faqs()
     return jsonify(faqs)
 
 # Order-related routes
-@app.route('/api/orders', methods=['GET'])
+@main_bp.route('/api/orders', methods=['GET'])
+@login_required
 def get_orders():
-    # For demo purposes, return all orders 
-    # In a real app, you would filter by authenticated user
+    if current_user.is_authenticated:
+        # Get orders from the database for the logged in user
+        orders = Order.query.filter_by(user_id=current_user.id).all()
+        orders_list = []
+        for order in orders:
+            order_dict = {
+                "order_id": order.order_id,
+                "date_placed": order.date_placed.isoformat(),
+                "status": order.status,
+                "total": order.total,
+                "tracking_number": order.tracking_number
+            }
+            orders_list.append(order_dict)
+        return jsonify(orders_list)
+    # For users who aren't logged in, return sample orders
     orders = order_data.get_orders()
     return jsonify(orders)
 
-@app.route('/api/orders/<order_id>', methods=['GET'])
+@main_bp.route('/api/orders/<order_id>', methods=['GET'])
 def get_order(order_id):
+    if current_user.is_authenticated:
+        # First try to get from database
+        order = Order.query.filter_by(order_id=order_id, user_id=current_user.id).first()
+        if order:
+            # Convert to dictionary
+            order_dict = {
+                "order_id": order.order_id,
+                "customer_id": current_user.id,
+                "customer_name": f"{current_user.first_name} {current_user.last_name}",
+                "date_placed": order.date_placed.isoformat(),
+                "status": order.status,
+                "total": order.total,
+                "items": [],
+                "shipping": {
+                    "method": "Standard",
+                    "cost": 4.99,
+                    "address": {},
+                    "tracking_number": order.tracking_number
+                },
+                "payment": {
+                    "method": order.payment_method,
+                    "card_last4": order.card_last4,
+                    "subtotal": order.total - 4.99,
+                    "tax": (order.total - 4.99) * 0.06,
+                    "total": order.total
+                }
+            }
+            
+            # Get order items
+            items = OrderItem.query.filter_by(order_id=order.id).all()
+            for item in items:
+                order_dict["items"].append({
+                    "product_id": item.product_id,
+                    "name": item.name,
+                    "quantity": item.quantity,
+                    "price": item.price,
+                    "subtotal": item.subtotal
+                })
+            
+            # Get shipping address if available
+            if order.shipping_address_id:
+                address = Address.query.get(order.shipping_address_id)
+                if address:
+                    order_dict["shipping"]["address"] = {
+                        "street": address.street,
+                        "city": address.city,
+                        "state": address.state,
+                        "zip": address.zip
+                    }
+            
+            return jsonify(order_dict)
+    
+    # Fall back to sample data
     order = order_data.get_order_by_id(order_id)
     if order:
         return jsonify(order)
     return jsonify({"error": "Order not found"}), 404
 
-@app.route('/api/orders/recent', methods=['GET'])
+@main_bp.route('/api/orders/recent', methods=['GET'])
 def get_recent_orders():
     limit = request.args.get('limit', 5, type=int)
+    if current_user.is_authenticated:
+        orders = Order.query.filter_by(user_id=current_user.id).order_by(Order.date_placed.desc()).limit(limit).all()
+        orders_list = []
+        for order in orders:
+            order_dict = {
+                "order_id": order.order_id,
+                "date_placed": order.date_placed.isoformat(),
+                "status": order.status,
+                "total": order.total
+            }
+            orders_list.append(order_dict)
+        return jsonify(orders_list)
+    
+    # Fall back to sample data
     orders = order_data.get_recent_orders(limit)
     return jsonify(orders)
 
-@app.route('/api/orders/status/<status>', methods=['GET'])
+@main_bp.route('/api/orders/status/<status>', methods=['GET'])
 def get_orders_by_status(status):
+    if current_user.is_authenticated:
+        orders = Order.query.filter_by(user_id=current_user.id, status=status).all()
+        orders_list = []
+        for order in orders:
+            order_dict = {
+                "order_id": order.order_id,
+                "date_placed": order.date_placed.isoformat(),
+                "status": order.status,
+                "total": order.total
+            }
+            orders_list.append(order_dict)
+        return jsonify(orders_list)
+    
+    # Fall back to sample data
     orders = order_data.get_orders_by_status(status)
     return jsonify(orders)
 
-@app.route('/api/orders/<order_id>/cancel', methods=['POST'])
+@main_bp.route('/api/orders/<order_id>/cancel', methods=['POST'])
 def cancel_order(order_id):
+    if current_user.is_authenticated:
+        order = Order.query.filter_by(order_id=order_id, user_id=current_user.id).first()
+        if order:
+            if order.status == "Confirmed":
+                order.status = "Cancelled"
+                db.session.commit()
+                return jsonify({"success": True, "message": "Confirmed order has been cancelled successfully and removed from your orders."})
+            elif order.status == "Processing":
+                order.status = "Cancelled"
+                db.session.commit()
+                return jsonify({"success": True, "message": "Processing order has been cancelled successfully."})
+            elif order.status == "Shipped":
+                return jsonify({"success": False, "message": "Cannot cancel a shipped order. Please contact customer support for return options."})
+            else:
+                return jsonify({"success": False, "message": f"Cannot cancel order with status: {order.status}."})
+    
+    # Fall back to sample data
     result = order_data.cancel_order(order_id)
     if result["success"]:
         return jsonify(result)
     else:
         return jsonify(result), 400
+
+# Form classes for authentication
+class LoginForm(FlaskForm):
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    remember_me = BooleanField('Remember Me')
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=3, max=64)])
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    password_confirm = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    first_name = StringField('First Name', validators=[DataRequired(), Length(max=64)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(max=64)])
+    
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user:
+            raise ValidationError('Username already taken. Please choose a different one.')
+            
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user:
+            raise ValidationError('Email already registered. Please use a different one.')
+
+class ForgotPasswordForm(FlaskForm):
+    email = EmailField('Email', validators=[DataRequired(), Email()])
+
+# Authentication routes
+@auth_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(
+            username=form.username.data,
+            email=form.email.data,
+            first_name=form.first_name.data,
+            last_name=form.last_name.data
+        )
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Registration successful! You can now log in.', 'success')
+        return redirect(url_for('auth.login'))
+    
+    return render_template('auth/register.html', form=form)
+
+@auth_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            next_page = request.args.get('next')
+            if not next_page or not next_page.startswith('/'):
+                next_page = url_for('main.index')
+            flash('Logged in successfully!', 'success')
+            return redirect(next_page)
+        flash('Invalid email or password. Please try again.', 'danger')
+    
+    return render_template('auth/login.html', form=form)
+
+@auth_bp.route('/logout')
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'info')
+    return redirect(url_for('main.index'))
+
+@auth_bp.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            # In a real app, you would send a password reset email
+            # For this demo, we'll just display a message
+            flash('If your email is registered, you will receive password reset instructions.', 'info')
+        else:
+            # Don't reveal if the email is not registered for security reasons
+            flash('If your email is registered, you will receive password reset instructions.', 'info')
+        return redirect(url_for('auth.login'))
+    
+    return render_template('auth/forgot_password.html', form=form)

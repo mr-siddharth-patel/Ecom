@@ -216,10 +216,17 @@ def cancel_order(order_id):
         return {"success": False, "message": "Order not found"}
     
     # Only allow cancellation for Processing or Confirmed orders
-    if order["status"] in ["Processing", "Confirmed"]:
+    if order["status"] == "Confirmed":
+        # In a real system, we would update the database and remove from orders list
+        # For this demo, we'll update the order in memory
+        order["status"] = "Cancelled"
+        return {"success": True, "message": "Confirmed order has been cancelled successfully and removed from your orders."}
+    elif order["status"] == "Processing":
         # In a real system, we would update the database
         # For this demo, we'll update the order in memory
         order["status"] = "Cancelled"
-        return {"success": True, "message": "Order has been cancelled successfully"}
+        return {"success": True, "message": "Processing order has been cancelled successfully."}
+    elif order["status"] == "Shipped":
+        return {"success": False, "message": "Cannot cancel a shipped order. Please contact customer support for return options."}
     else:
-        return {"success": False, "message": f"Cannot cancel order with status: {order['status']}. Only Processing or Confirmed orders can be cancelled."}
+        return {"success": False, "message": f"Cannot cancel order with status: {order['status']}."}

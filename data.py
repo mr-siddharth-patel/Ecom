@@ -131,43 +131,63 @@ products = [
     # Home Products Category
     {
         "id": 13,
-        "name": "Barista Pro Coffee Maker",
-        "description": "Premium coffee maker with built-in grinder, programmable timer, and thermal carafe that keeps coffee hot for hours.",
-        "price": 159.99,
+        "name": "Modern Scandinavian Sofa",
+        "description": "Elegant mid-century modern sofa with oak legs, premium upholstery, and plush cushions for ultimate comfort and style.",
+        "price": 899.99,
         "category": "Home",
-        "image_url": "https://images.unsplash.com/photo-1606791405792-1004f1718d04?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
-        "rating": 4.7,
-        "stock": 22
+        "image_url": "https://images.unsplash.com/photo-1567016432779-094069958ea5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+        "rating": 4.8,
+        "stock": 8
     },
     {
         "id": 14,
-        "name": "Smart Home Assistant Hub",
-        "description": "Voice-controlled smart home hub with premium speakers, video display, and compatibility with all major smart home devices.",
+        "name": "Minimalist Floating Shelf Set",
+        "description": "Set of 3 premium wooden floating shelves with hidden brackets for a clean, contemporary look. Perfect for displaying decor items.",
         "price": 129.99,
         "category": "Home",
-        "image_url": "https://images.unsplash.com/photo-1588786849743-7d329a0aba88?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
+        "image_url": "https://images.unsplash.com/photo-1591129841117-3adfd313a592?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
         "rating": 4.6,
-        "stock": 30
+        "stock": 20
     },
     {
         "id": 15,
-        "name": "Luxury Bedding Set",
-        "description": "1000 thread count Egyptian cotton bedding set including duvet cover, fitted sheet, and 4 pillowcases.",
-        "price": 189.99,
+        "name": "Artisan Ceramic Vase Collection",
+        "description": "Set of 3 handcrafted ceramic vases in complementary earth tones, each with unique textures and finishes. Perfect centerpiece for any room.",
+        "price": 179.99,
         "category": "Home",
-        "image_url": "https://images.unsplash.com/photo-1584100936595-c0654b40b57f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
-        "rating": 4.8,
-        "stock": 15
+        "image_url": "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+        "rating": 4.9,
+        "stock": 12
     },
     {
         "id": 16,
-        "name": "Cast Iron Cookware Set",
-        "description": "5-piece pre-seasoned cast iron cookware set including skillet, dutch oven, and griddle. Lifetime guarantee.",
-        "price": 219.99,
+        "name": "Luxury Velvet Accent Chair",
+        "description": "Statement accent chair with plush velvet upholstery, gold-toned metal legs, and ergonomic design for both style and comfort.",
+        "price": 449.99,
         "category": "Home",
-        "image_url": "https://images.unsplash.com/photo-1572716545064-11fc11b9c4ed?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80",
-        "rating": 4.9,
-        "stock": 12
+        "image_url": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+        "rating": 4.7,
+        "stock": 7
+    },
+    {
+        "id": 17,
+        "name": "Nordic Pendant Light",
+        "description": "Modern pendant light with natural wood finish and adjustable height. Provides warm ambient lighting for dining rooms or kitchen islands.",
+        "price": 189.99,
+        "category": "Home",
+        "image_url": "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+        "rating": 4.5,
+        "stock": 15
+    },
+    {
+        "id": 18,
+        "name": "Geometric Area Rug",
+        "description": "Soft, plush area rug with contemporary geometric patterns. Made from premium materials with non-slip backing. Size: 5'x7'.",
+        "price": 249.99,
+        "category": "Home",
+        "image_url": "https://images.unsplash.com/photo-1575414774607-989bac80aa0e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=80",
+        "rating": 4.8,
+        "stock": 10
     }
 ]
 
