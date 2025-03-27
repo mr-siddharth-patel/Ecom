@@ -98,18 +98,18 @@ const ProductList = () => {
               </div>
               <div className="card-body d-flex flex-column">
                 <Link to={`/products/${product.id}`} className="product-title-link">
-                  <h5 className="card-title text-light">{product.name}</h5>
+                  <h5 className="card-title text-dark">{product.name}</h5>
                 </Link>
-                <p className="product-price text-warning">${product.price.toFixed(2)}</p>
+                <p className="product-price text-success">${product.price.toFixed(2)}</p>
                 <div className="product-rating mb-2">
                   {Array(5).fill().map((_, index) => (
                     <i key={index} className={`bi ${index < Math.floor(product.rating) ? 'bi-star-fill text-warning' : index < product.rating ? 'bi-star-half text-warning' : 'bi-star text-secondary'}`}></i>
                   ))}
-                  <span className="ms-1 text-light">({product.rating})</span>
+                  <span className="ms-1 text-dark">({product.rating})</span>
                 </div>
-                <p className="card-text flex-grow-1 text-light">{product.description.substring(0, 80)}...</p>
+                <p className="card-text flex-grow-1 text-dark">{product.description.substring(0, 80)}...</p>
                 <div className="d-flex">
-                  <Link to={`/products/${product.id}`} className="btn btn-outline-light me-2 flex-grow-1">
+                  <Link to={`/products/${product.id}`} className="btn btn-outline-primary me-2 flex-grow-1">
                     <i className="bi bi-eye me-1"></i> Details
                   </Link>
                   {product.stock > 0 ? (

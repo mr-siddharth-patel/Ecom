@@ -121,10 +121,10 @@ const ProductDetail = () => {
           <p className="mb-4">{product.description}</p>
           
           <div className="mb-4">
-            <label className="form-label text-light">Quantity:</label>
-            <div className="d-flex align-items-center quantity-selector">
+            <label className="form-label text-dark">Quantity:</label>
+            <div className="d-flex align-items-center quantity-selector bg-light">
               <button 
-                className="btn btn-outline-light" 
+                className="btn btn-outline-primary" 
                 type="button"
                 onClick={() => quantity > 1 && setQuantity(quantity - 1)}
               >
@@ -137,10 +137,10 @@ const ProductDetail = () => {
                 max={product.stock}
                 value={quantity}
                 onChange={handleQuantityChange}
-                style={{maxWidth: '70px'}}
+                style={{maxWidth: '70px', background: '#ffffff', color: '#333'}}
               />
               <button 
-                className="btn btn-outline-light" 
+                className="btn btn-outline-primary" 
                 type="button"
                 onClick={() => quantity < product.stock && setQuantity(quantity + 1)}
               >

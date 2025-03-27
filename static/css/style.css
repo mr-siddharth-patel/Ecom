@@ -1,15 +1,19 @@
 /* Global Styles */
 :root {
-  --primary-color: #4a55a2;
-  --secondary-color: #7895cb;
-  --accent-color: #a0bfe0;
-  --light-color: #c5dff8;
-  --dark-color: #1e293b;
-  --success-color: #10b981;
-  --danger-color: #ef4444;
-  --warning-color: #f59e0b;
-  --body-bg: #f8fafc;
+  --primary-color: #5271ff;
+  --secondary-color: #ff66c4;
+  --accent-color: #ffd166;
+  --light-color: #f5f5f5;
+  --dark-color: #212529;
+  --success-color: #52c41a;
+  --danger-color: #ff4d4f;
+  --warning-color: #ffb72b;
+  --body-bg: #ffffff;
   --card-bg: #ffffff;
+  --text-color: #333333;
+  --text-light: #ffffff;
+  --text-dark: #212529;
+  --border-color: #e9ecef;
   
   /* Animation and transition timings */
   --transition-fast: 0.2s;
@@ -782,7 +786,7 @@ a:not(.btn):not(.nav-link):hover:after {
   overflow: hidden;
   margin-bottom: 20px;
   height: 100%;
-  background-color: #343a40;
+  background-color: #ffffff;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
@@ -814,18 +818,18 @@ a:not(.btn):not(.nav-link):hover:after {
   position: absolute;
   bottom: 15px;
   right: 15px;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  opacity: 1;
   z-index: 2;
   border-radius: 20px;
   padding: 5px 12px;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.product-image-container:hover .quick-add-btn {
-  opacity: 1;
-  transform: translateY(0);
+.quick-add-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .product-title-link {
@@ -842,25 +846,28 @@ a:not(.btn):not(.nav-link):hover:after {
 .quantity-selector {
   display: inline-flex;
   align-items: center;
-  background-color: #343a40;
+  background-color: #f8f9fa;
   border-radius: 8px;
   padding: 5px;
   margin-top: 0.5rem;
   margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .quantity-input {
-  background-color: #495057;
-  color: #fff;
-  border: 1px solid #6c757d;
+  background-color: #ffffff;
+  color: #333333;
+  border: 1px solid #ced4da;
   border-radius: 4px;
   font-weight: bold;
   width: 60px;
 }
 
 .quantity-input:focus {
-  background-color: #6c757d;
-  color: #fff;
+  background-color: #ffffff;
+  color: #333333;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(82, 113, 255, 0.25);
 }
 
 /* Enhanced order list in chat */
@@ -880,7 +887,7 @@ a:not(.btn):not(.nav-link):hover:after {
 }
 
 .order-id {
-  color: #e9ecef;
+  color: #333333;
   font-size: 1.1rem;
 }
 

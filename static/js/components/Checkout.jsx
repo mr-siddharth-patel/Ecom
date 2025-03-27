@@ -1,6 +1,6 @@
 // Checkout Component
 
-const { useState, useContext } = React;
+const { useState, useContext, useEffect } = React;
 const { useNavigate, Link } = window.ReactRouterDOM;
 
 const Checkout = () => {
@@ -22,6 +22,23 @@ const Checkout = () => {
   });
   
   const [loading, setLoading] = useState(false);
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
+  
+  // Initialize Bootstrap modal
+  useEffect(() => {
+    // This creates the modal instance when the component is mounted
+    const summaryModal = new bootstrap.Modal(document.getElementById('orderSummaryModal'), {
+      keyboard: true,
+      backdrop: true
+    });
+    
+    // Cleanup function to hide modal when component unmounts
+    return () => {
+      if (summaryModal && summaryModal._element) {
+        summaryModal.hide();
+      }
+    };
+  }, []);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -244,6 +261,20 @@ const Checkout = () => {
           
           <div className="mt-4 mb-5">
             <button 
+              type="button" 
+              className="btn btn-primary btn-lg w-100 mb-3"
+              onClick={() => {
+                if (document.getElementById('orderSummaryModal')) {
+                  const modal = new bootstrap.Modal(document.getElementById('orderSummaryModal'));
+                  modal.show();
+                }
+              }}
+            >
+              <i className="bi bi-list-check me-2"></i>
+              Review Purchase
+            </button>
+          
+            <button 
               type="submit" 
               className="btn btn-gradient btn-lg w-100"
               disabled={loading}
@@ -253,7 +284,12 @@ const Checkout = () => {
                   <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                   Processing...
                 </>
-              ) : 'Place Order'}
+              ) : (
+                <>
+                  <i className="bi bi-credit-card me-2"></i>
+                  Place Order
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -305,6 +341,115 @@ const Checkout = () => {
               <i className="bi bi-chat-dots me-2"></i>
               Chat with Support
             </button>
+          </div>
+        </div>
+      </div>
+      
+      {/* Order Summary Modal */}
+      <div className="modal fade" id="orderSummaryModal" tabIndex="-1" aria-labelledby="orderSummaryModalLabel" aria-hidden="true">
+        <div className="modal-dialog modal-lg modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header bg-primary text-white">
+              <h5 className="modal-title" id="orderSummaryModalLabel">
+                <i className="bi bi-bag-check me-2"></i>
+                Purchase Summary
+              </h5>
+              <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <div className="row mb-4">
+                <div className="col-md-6">
+                  <h5 className="mb-3">Customer Information</h5>
+                  <p><strong>Name:</strong> {formData.firstName} {formData.lastName}</p>
+                  <p><strong>Email:</strong> {formData.email}</p>
+                  
+                  <h5 className="mt-4 mb-3">Shipping Address</h5>
+                  <p>{formData.address}</p>
+                  <p>{formData.city}, {formData.state} {formData.zipCode}</p>
+                </div>
+                <div className="col-md-6">
+                  <h5 className="mb-3">Payment Method</h5>
+                  <p><strong>Card:</strong> **** **** **** {formData.cardNumber.slice(-4) || '****'}</p>
+                  <p><strong>Name on Card:</strong> {formData.cardName}</p>
+                  <p><strong>Expiration:</strong> {formData.expDate}</p>
+                </div>
+              </div>
+              
+              <h5 className="mb-3">Order Items</h5>
+              <div className="table-responsive">
+                <table className="table">
+                  <thead className="table-light">
+                    <tr>
+                      <th>Product</th>
+                      <th>Price</th>
+                      <th>Quantity</th>
+                      <th className="text-end">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cartItems.map(item => (
+                      <tr key={item.id}>
+                        <td>
+                          <div className="d-flex align-items-center">
+                            <img 
+                              src={item.image_url} 
+                              alt={item.name}
+                              style={{width: '50px', height: '50px', objectFit: 'contain'}}
+                              className="me-2"
+                            />
+                            <span>{item.name}</span>
+                          </div>
+                        </td>
+                        <td>${item.price.toFixed(2)}</td>
+                        <td>{item.quantity}</td>
+                        <td className="text-end">${(item.price * item.quantity).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colSpan="3" className="text-end"><strong>Subtotal:</strong></td>
+                      <td className="text-end">${calculateTotal().toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan="3" className="text-end"><strong>Shipping:</strong></td>
+                      <td className="text-end">Free</td>
+                    </tr>
+                    <tr>
+                      <td colSpan="3" className="text-end"><strong>Tax:</strong></td>
+                      <td className="text-end">${(calculateTotal() * 0.07).toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan="3" className="text-end"><strong>Total:</strong></td>
+                      <td className="text-end text-success fw-bold">${(calculateTotal() + calculateTotal() * 0.07).toFixed(2)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              
+              <div className="alert alert-info mt-3">
+                <i className="bi bi-info-circle me-2"></i>
+                Your order will be processed immediately after you click "Place Order" on the checkout page.
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+              <button 
+                type="button" 
+                className="btn btn-primary" 
+                data-bs-dismiss="modal"
+                onClick={() => {
+                  // Focus the place order button when closing the modal
+                  setTimeout(() => {
+                    const placeOrderButton = document.querySelector('button[type="submit"]');
+                    if (placeOrderButton) placeOrderButton.focus();
+                  }, 500);
+                }}
+              >
+                <i className="bi bi-arrow-return-left me-2"></i>
+                Return to Checkout
+              </button>
+            </div>
           </div>
         </div>
       </div>

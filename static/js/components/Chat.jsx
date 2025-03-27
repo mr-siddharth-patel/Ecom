@@ -295,7 +295,7 @@ const Chat = () => {
               >
                 <div className="order-details">
                   <div className="d-flex justify-content-between align-items-center w-100">
-                    <h6 className="mb-1 order-id">Order #{order.order_id}</h6>
+                    <h6 className="mb-1 order-id text-primary fw-bold">Order #{order.order_id}</h6>
                     <small className="text-muted order-date">{new Date(order.date_placed).toLocaleDateString()}</small>
                   </div>
                   
