@@ -75,7 +75,7 @@
             
             <div class="mb-3">
               {{ form.password.label(class="form-label") }}
-              {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Create a password") }}
+              {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), placeholder="Create a password", id="passwordInput") }}
               {% if form.password.errors %}
                 <div class="invalid-feedback">
                   {% for error in form.password.errors %}
@@ -83,8 +83,80 @@
                   {% endfor %}
                 </div>
               {% endif %}
-              <div class="form-text">Must be at least 8 characters long</div>
+              <div class="password-criteria mt-2">
+                <p class="form-text mb-1">Password must include:</p>
+                <ul class="list-unstyled small">
+                  <li><span id="length-check" class="text-muted">✓ At least 8 characters</span></li>
+                  <li><span id="uppercase-check" class="text-muted">✓ At least one uppercase letter</span></li>
+                  <li><span id="lowercase-check" class="text-muted">✓ At least one lowercase letter</span></li>
+                  <li><span id="number-check" class="text-muted">✓ At least one number</span></li>
+                  <li><span id="special-check" class="text-muted">✓ At least one special character (!@#$%^&*()_-+=<>?)</span></li>
+                </ul>
+              </div>
             </div>
+            
+            <script>
+              document.addEventListener('DOMContentLoaded', function() {
+                const passwordInput = document.getElementById('passwordInput');
+                const lengthCheck = document.getElementById('length-check');
+                const uppercaseCheck = document.getElementById('uppercase-check');
+                const lowercaseCheck = document.getElementById('lowercase-check');
+                const numberCheck = document.getElementById('number-check');
+                const specialCheck = document.getElementById('special-check');
+                
+                const updatePasswordChecks = function() {
+                  const password = passwordInput.value;
+                  
+                  // Check length
+                  if (password.length >= 8) {
+                    lengthCheck.classList.remove('text-muted');
+                    lengthCheck.classList.add('text-success');
+                  } else {
+                    lengthCheck.classList.remove('text-success');
+                    lengthCheck.classList.add('text-muted');
+                  }
+                  
+                  // Check uppercase
+                  if (/[A-Z]/.test(password)) {
+                    uppercaseCheck.classList.remove('text-muted');
+                    uppercaseCheck.classList.add('text-success');
+                  } else {
+                    uppercaseCheck.classList.remove('text-success');
+                    uppercaseCheck.classList.add('text-muted');
+                  }
+                  
+                  // Check lowercase
+                  if (/[a-z]/.test(password)) {
+                    lowercaseCheck.classList.remove('text-muted');
+                    lowercaseCheck.classList.add('text-success');
+                  } else {
+                    lowercaseCheck.classList.remove('text-success');
+                    lowercaseCheck.classList.add('text-muted');
+                  }
+                  
+                  // Check number
+                  if (/[0-9]/.test(password)) {
+                    numberCheck.classList.remove('text-muted');
+                    numberCheck.classList.add('text-success');
+                  } else {
+                    numberCheck.classList.remove('text-success');
+                    numberCheck.classList.add('text-muted');
+                  }
+                  
+                  // Check special character
+                  if (/[!@#$%^&*()_\-+=<>?]/.test(password)) {
+                    specialCheck.classList.remove('text-muted');
+                    specialCheck.classList.add('text-success');
+                  } else {
+                    specialCheck.classList.remove('text-success');
+                    specialCheck.classList.add('text-muted');
+                  }
+                };
+                
+                // Check password criteria on input
+                passwordInput.addEventListener('input', updatePasswordChecks);
+              });
+            </script>
             
             <div class="mb-4">
               {{ form.password_confirm.label(class="form-label") }}

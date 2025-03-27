@@ -306,9 +306,51 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('Email already registered. Please use a different one.')
+            
+    def validate_password(self, password):
+        """
+        Validate password strength:
+        - At least 8 characters
+        - Contains at least one uppercase letter
+        - Contains at least one lowercase letter
+        - Contains at least one number
+        - Contains at least one special character (!@#$%^&*()_-+=<>?)
+        """
+        if len(password.data) < 8:
+            raise ValidationError('Password must be at least 8 characters long.')
+            
+        if not any(char.isupper() for char in password.data):
+            raise ValidationError('Password must contain at least one uppercase letter.')
+            
+        if not any(char.islower() for char in password.data):
+            raise ValidationError('Password must contain at least one lowercase letter.')
+            
+        if not any(char.isdigit() for char in password.data):
+            raise ValidationError('Password must contain at least one number.')
+            
+        if not any(char in '!@#$%^&*()_-+=<>?' for char in password.data):
+            raise ValidationError('Password must contain at least one special character (!@#$%^&*()_-+=<>?).')
 
 class ForgotPasswordForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired(), Email()])
+
+# API routes for authentication
+@main_bp.route('/api/auth/status')
+def auth_status():
+    if current_user.is_authenticated:
+        return jsonify({
+            'authenticated': True,
+            'user': {
+                'username': current_user.username,
+                'email': current_user.email,
+                'first_name': current_user.first_name,
+                'last_name': current_user.last_name
+            }
+        })
+    else:
+        return jsonify({
+            'authenticated': False
+        })
 
 # Authentication routes
 @auth_bp.route('/register', methods=['GET', 'POST'])

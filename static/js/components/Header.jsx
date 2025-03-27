@@ -1,11 +1,26 @@
 // Header Component
 
 const { Link, useNavigate } = window.ReactRouterDOM;
-const { useContext } = React;
+const { useContext, useState, useEffect } = React;
 
 const Header = () => {
   const navigate = useNavigate();
   const { cartItems } = useContext(CartContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+  
+  // Fetch user authentication status
+  useEffect(() => {
+    fetch('/api/auth/status')
+      .then(response => response.json())
+      .then(data => {
+        setIsLoggedIn(data.authenticated);
+        if (data.authenticated && data.user) {
+          setUserName(data.user.first_name);
+        }
+      })
+      .catch(error => console.error('Error checking auth status:', error));
+  }, []);
   
   // Calculate total items in cart
   const totalItems = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -54,7 +69,7 @@ const Header = () => {
               </Link>
               
               <button 
-                className="btn btn-primary ms-2"
+                className="btn btn-primary me-2"
                 onClick={() => {
                   // Find the Chat component and open it
                   const chatButton = document.querySelector('.chat-button');
@@ -63,6 +78,42 @@ const Header = () => {
               >
                 <i className="bi bi-chat-dots me-1"></i> Support
               </button>
+              
+              {isLoggedIn ? (
+                <div className="dropdown">
+                  <button 
+                    className="btn btn-outline-secondary dropdown-toggle" 
+                    type="button" 
+                    id="userDropdown" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                  >
+                    <i className="bi bi-person-circle me-1"></i>
+                    Hi, {userName}
+                  </button>
+                  <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li>
+                      <Link className="dropdown-item" to="/orders">
+                        <i className="bi bi-box-seam me-2"></i>My Orders
+                      </Link>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="/auth/logout">
+                        <i className="bi bi-box-arrow-right me-2"></i>Sign Out
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <div className="d-flex">
+                  <a href="/auth/login" className="btn btn-outline-primary me-2">
+                    Sign In
+                  </a>
+                  <a href="/auth/register" className="btn btn-outline-success">
+                    Sign Up
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
