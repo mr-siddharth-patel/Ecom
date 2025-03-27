@@ -18,13 +18,18 @@ const Orders = () => {
     setLoading(true);
     axios.get('/api/orders')
       .then(response => {
-        setOrders(response.data);
+        // Make sure we have an array of orders
+        const orderData = response.data || [];
+        // Ensure orders is always an array
+        setOrders(Array.isArray(orderData) ? orderData : []);
         setLoading(false);
       })
       .catch(error => {
         console.error('Error fetching orders:', error);
         setError('Failed to load orders. Please try again later.');
         setLoading(false);
+        // Initialize with empty array on error
+        setOrders([]);
       });
   }, []);
 
@@ -79,10 +84,15 @@ const Orders = () => {
       // Reload all orders to get updated status
       axios.get('/api/orders')
         .then(response => {
-          setOrders(response.data);
+          // Make sure we have an array of orders
+          const orderData = response.data || [];
+          // Ensure orders is always an array
+          setOrders(Array.isArray(orderData) ? orderData : []);
         })
         .catch(error => {
           console.error('Error fetching orders:', error);
+          // Initialize with empty array on error
+          setOrders([]);
         });
     }
   };

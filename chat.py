@@ -86,11 +86,15 @@ def get_groq_response(user_message, session_id="default"):
           * Total: $699.98
         
         ORDER CANCELLATION:
-        - I can only help cancel orders with "Confirmed" status - I'll do this directly if they provide a confirmed order number
+        - When a customer asks to cancel an order, ALWAYS show the order details first (items, price, order status, etc.)
+        - Include a product image description if available
+        - Ask for explicit confirmation before cancelling: "Do you want me to cancel this order for you?"
+        - I can only help cancel orders with "Confirmed" status
         - For "Processing" orders, direct them to their Orders page where they can use the Cancel button
         - Explain clearly that shipped orders cannot be cancelled through any means
         - If they try to cancel a processing or shipped order through me, politely explain I can't do that
         - For confirmed orders I should mention I've cancelled it and it will be removed from their orders
+        - NEVER cancel an order without first showing its details and getting explicit confirmation
         
         If you don't know a specific answer, just be honest and humble about it. Never make up information."""
     }

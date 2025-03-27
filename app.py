@@ -139,7 +139,6 @@ def get_faqs():
 
 # Order-related routes
 @main_bp.route('/api/orders', methods=['GET'])
-@login_required
 def get_orders():
     if current_user.is_authenticated:
         # Get orders from the database for the logged in user
@@ -155,9 +154,10 @@ def get_orders():
             }
             orders_list.append(order_dict)
         return jsonify(orders_list)
-    # For users who aren't logged in, return sample orders
-    orders = order_data.get_orders()
-    return jsonify(orders)
+    else:
+        # For users who aren't logged in, return sample orders
+        orders = order_data.get_orders()
+        return jsonify(orders)
 
 @main_bp.route('/api/orders/<order_id>', methods=['GET'])
 def get_order(order_id):
