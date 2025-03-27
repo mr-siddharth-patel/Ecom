@@ -657,11 +657,29 @@ h1, h2, h3, h4, h5, h6 {
 .form-control, .form-select {
   transition: all var(--transition-normal) ease;
   border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  color: #212529;
 }
 
 .form-control:focus, .form-select:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 0.2rem rgba(74, 85, 162, 0.15);
+  background-color: #ffffff;
+}
+
+/* Improve dark theme form inputs */
+[data-bs-theme=dark] .form-control,
+[data-bs-theme=dark] .form-select {
+  background-color: #2b3035;
+  border-color: #495057;
+  color: #e9ecef;
+}
+
+[data-bs-theme=dark] .form-control:focus,
+[data-bs-theme=dark] .form-select:focus {
+  background-color: #343a40;
+  border-color: var(--primary-color);
+  color: #fff;
 }
 
 /* Hover effects for links and interactive elements */
@@ -712,4 +730,46 @@ a:not(.btn):not(.nav-link):hover:after {
     right: 0;
     border-radius: 0;
   }
+}
+
+/* Enhanced form controls for checkout */
+.checkout-section .form-control {
+  background-color: #ffffff;
+  color: #2d2d2d;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  padding: 12px 15px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.checkout-section .form-control:focus {
+  background-color: #ffffff;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(74, 85, 162, 0.25);
+  transform: translateY(-2px);
+}
+
+.checkout-section .form-label {
+  font-weight: 500;
+  color: #4a4a4a;
+  margin-bottom: 0.5rem;
+}
+
+/* Ensure dark theme has high-contrast inputs */
+[data-bs-theme=dark] .checkout-section .form-control {
+  background-color: #343a40;
+  color: #fff;
+  border-color: #495057;
+}
+
+[data-bs-theme=dark] .checkout-section .form-control:focus {
+  background-color: #495057;
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+[data-bs-theme=dark] .checkout-section .form-label {
+  color: #e9ecef;
 }

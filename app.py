@@ -110,11 +110,90 @@ def handle_cart():
 
 @main_bp.route('/api/checkout', methods=['POST'])
 def checkout():
-    # In a real application, you would process payment and create an order
-    # For this MVP, we'll just clear the cart
+    # Get data from request
+    data = request.json
+    items = data.get('items', [])
+    customer = data.get('customer', {})
+    
+    if not items:
+        return jsonify({"error": "No items in cart"}), 400
+    
+    # Calculate total
+    total = sum(item.get('price', 0) * item.get('quantity', 0) for item in items)
+    
+    # Generate a unique order ID (in a real app, this would be more sophisticated)
+    import random
+    import string
+    order_id = 'ORD-' + ''.join(random.choices(string.digits, k=9))
+    
+    # Create order in database if user is authenticated
+    if current_user.is_authenticated:
+        try:
+            # Create new order
+            new_order = Order(
+                order_id=order_id,
+                user_id=current_user.id,
+                status='Confirmed',
+                total=total,
+                payment_method='Credit Card',
+                card_last4=customer.get('cardNumber', '')[-4:] if customer.get('cardNumber') else None
+            )
+            db.session.add(new_order)
+            db.session.flush()  # Get the ID before committing
+            
+            # Add order items
+            for item in items:
+                order_item = OrderItem(
+                    order_id=new_order.id,
+                    product_id=item.get('id'),
+                    name=item.get('name'),
+                    quantity=item.get('quantity', 1),
+                    price=item.get('price', 0)
+                )
+                db.session.add(order_item)
+            
+            # Add shipping address if provided
+            if all(k in customer for k in ['address', 'city', 'state', 'zipCode']):
+                # Check if the user already has this address
+                address = Address.query.filter_by(
+                    user_id=current_user.id,
+                    street=customer.get('address'),
+                    city=customer.get('city'),
+                    state=customer.get('state'),
+                    zip=customer.get('zipCode')
+                ).first()
+                
+                if not address:
+                    address = Address(
+                        user_id=current_user.id,
+                        street=customer.get('address'),
+                        city=customer.get('city'),
+                        state=customer.get('state'),
+                        zip=customer.get('zipCode'),
+                        is_default=False
+                    )
+                    db.session.add(address)
+                    db.session.flush()
+                
+                # Associate address with order
+                new_order.shipping_address_id = address.id
+            
+            # Commit the transaction
+            db.session.commit()
+            
+        except Exception as e:
+            db.session.rollback()
+            logging.error(f"Error creating order: {str(e)}")
+            return jsonify({"error": "Failed to create order"}), 500
+    
+    # Clear the cart
     session['cart'] = []
     session.modified = True
-    return jsonify({"message": "Order placed successfully"})
+    
+    return jsonify({
+        "message": "Order placed successfully", 
+        "order_id": order_id
+    })
 
 @main_bp.route('/api/chat', methods=['POST'])
 def chat():
