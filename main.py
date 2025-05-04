@@ -19,7 +19,10 @@ def create_app():
 
     # Configure app
     app.secret_key = os.environ.get("SESSION_SECRET", "dev_secret_key")
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+    
+    # Configure SQLite database
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(basedir, 'ecommerce.db')}"
     app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
         "pool_recycle": 300,
         "pool_pre_ping": True,

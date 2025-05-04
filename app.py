@@ -35,6 +35,13 @@ def register_blueprints(app):
 def index():
     return render_template('index.html')
 
+# Add catch-all route for client-side routing
+@main_bp.route('/<path:path>')
+def catch_all(path):
+    if path.startswith('api/'):
+        return jsonify({"error": "API endpoint not found"}), 404
+    return render_template('index.html')
+
 # API Routes
 @main_bp.route('/api/products', methods=['GET'])
 def get_products():
